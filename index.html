@@ -26,8 +26,8 @@ canvas.held{cursor:grabbing}
 </head>
 <body>
 
-<canvas id="c" aria-label="Arco: mantén pulsado para montar la cuerda y suelta para tocarla"></canvas>
-<p id="hint">Mantén pulsado para montar la cuerda<small>espacio o toque largo · suelta para tocarla</small></p>
+<canvas id="c" aria-label="Arquero: mantén pulsado para tensar el arco y suelta para disparar"></canvas>
+<p id="hint">Mantén pulsado para tensar el arco<small>espacio o toque largo · suelta para disparar</small></p>
 <div class="hidden-controls" aria-hidden="true">
   <select id="inst"><option value="acoustic_guitar_nylon" selected>nylon</option></select>
   <input id="fx" type="range" value="100"><input id="echoAmt" type="range" value="40"><input id="bg" type="range" value="4">
@@ -202,24 +202,11 @@ const grain=document.createElement('canvas');grain.width=grain.height=160;
 const grainPat=g2.createPattern(grain,'repeat');
 
 // ---------- estado ----------
-let state='idle',pressT=0,fullAt=0,firedAt=0,draw=0,pull=0,shake=0,flash=0,vib=0,heartTimer=0,heldNotes=[],waves=[];
+let state='idle',pressT=0,fullAt=0,firedAt=0,draw=0,pull=0,arrowX=0,arrowV=0,arrowA=1,shake=0,flash=0,vib=0,heartTimer=0,heldNotes=[],waves=[];
 const dust=Array.from({length:80},()=>({x:Math.random(),y:Math.random(),z:.3+Math.random()*.7}));
 function setHint(html,on=true){hint.innerHTML=html;hint.classList.toggle('off',!on);}
 // ---------- idioma automático según el navegador del visitante ----------
-const STR={
- es:{idle:['Mantén pulsado para montar la cuerda','espacio o toque largo · suelta para tocarla'],early:['Monta la cuerda hasta el final','mantén pulsado hasta que el arco tiemble'],full:['Suelta','para tocar la cuerda'],aria:'Arco: mantén pulsado para montar la cuerda y suelta para tocarla'},
- en:{idle:['Press and hold to string the bow','space or long press · release to play it'],early:['String the bow all the way','hold until the bow trembles'],full:['Release','to play the string'],aria:'Bow: press and hold to string it, release to play the string'},
- pt:{idle:['Mantenha pressionado para encordoar o arco','espaço ou toque longo · solte para tocá-la'],early:['Encordoe o arco até o fim','segure até o arco tremer'],full:['Solte','para tocar a corda'],aria:'Arco: mantenha pressionado para encordoar e solte para tocar a corda'},
- fr:{idle:['Maintenez appuyé pour bander l’arc','espace ou appui long · relâchez pour la jouer'],early:['Bandez l’arc jusqu’au bout','maintenez jusqu’à ce que l’arc tremble'],full:['Relâchez','pour faire chanter la corde'],aria:'Arc : maintenez appuyé pour le bander, relâchez pour jouer la corde'},
- it:{idle:['Tieni premuto per incordare l’arco','spazio o pressione lunga · rilascia per suonarla'],early:['Incorda l’arco fino in fondo','tieni premuto finché l’arco trema'],full:['Rilascia','per suonare la corda'],aria:'Arco: tieni premuto per incordarlo, rilascia per suonare la corda'},
- de:{idle:['Gedrückt halten, um den Bogen zu bespannen','Leertaste oder lange tippen · loslassen zum Spielen'],early:['Bespanne den Bogen ganz','halten, bis der Bogen zittert'],full:['Loslassen','um die Sehne erklingen zu lassen'],aria:'Bogen: gedrückt halten zum Bespannen, loslassen zum Spielen der Sehne'},
- el:{idle:['Κράτα πατημένο για να περάσεις τη χορδή','διάστημα ή παρατεταμένο άγγιγμα · άφησε για να ηχήσει'],early:['Πέρασε τη χορδή ως το τέλος','κράτα μέχρι να τρέμει το τόξο'],full:['Άφησε','για να ηχήσει η χορδή'],aria:'Τόξο: κράτα πατημένο για να περάσεις τη χορδή, άφησε για να ηχήσει'},
- ja:{idle:['長押しして弓に弦を張る','スペースキーまたは長押し · 離すと弦が鳴ります'],early:['最後まで弦を張ってください','弓が震えるまで押し続けて'],full:['離す','弦を鳴らす'],aria:'弓：長押しで弦を張り、離すと弦が鳴ります'},
- zh:{idle:['长按为弓上弦','空格键或长按 · 松开即可拨响弓弦'],early:['把弦完全上好','按住直到弓开始颤动'],full:['松开','拨响弓弦'],aria:'弓：长按上弦，松开拨响弓弦'},
- ko:{idle:['길게 눌러 활에 시위를 거세요','스페이스 또는 길게 누르기 · 놓으면 시위가 울립니다'],early:['시위를 끝까지 거세요','활이 떨릴 때까지 누르세요'],full:['놓기','시위를 울리기'],aria:'활: 길게 눌러 시위를 걸고, 놓으면 시위가 울립니다'},
- ru:{idle:['Удерживайте, чтобы натянуть тетиву','пробел или долгое нажатие · отпустите, чтобы она зазвучала'],early:['Натяните тетиву до конца','держите, пока лук не задрожит'],full:['Отпустите','чтобы тетива зазвучала'],aria:'Лук: удерживайте, чтобы натянуть тетиву, отпустите, чтобы она зазвучала'},
- ar:{idle:['اضغط مطوّلًا لشدّ الوتر على القوس','المسافة أو ضغطة طويلة · اترك ليرنّ الوتر'],early:['شدّ الوتر حتى النهاية','استمر بالضغط حتى يرتجف القوس'],full:['اترك','ليرنّ الوتر'],aria:'قوس: اضغط مطوّلًا لشدّ الوتر، واترك ليرنّ'}
-};
+const STR={"es": {"idle": ["Mantén pulsado para tensar el arco", "espacio o toque largo · suelta para disparar"], "early": ["Tensa el arco hasta el final", "mantén pulsado hasta que tiemble"], "full": ["Suelta", "para disparar"], "aria": "Arquero: mantén pulsado para tensar el arco y suelta para disparar"}, "en": {"idle": ["Press and hold to draw the bow", "space or long press · release to shoot"], "early": ["Draw the bow all the way", "hold until it trembles"], "full": ["Release", "to shoot"], "aria": "Archer: press and hold to draw the bow, release to shoot"}, "pt": {"idle": ["Mantenha pressionado para puxar o arco", "espaço ou toque longo · solte para disparar"], "early": ["Puxe o arco até o fim", "segure até ele tremer"], "full": ["Solte", "para disparar"], "aria": "Arqueiro: mantenha pressionado para puxar o arco e solte para disparar"}, "fr": {"idle": ["Maintenez appuyé pour bander l’arc", "espace ou appui long · relâchez pour tirer"], "early": ["Bandez l’arc jusqu’au bout", "maintenez jusqu’à ce qu’il tremble"], "full": ["Relâchez", "pour tirer"], "aria": "Archer : maintenez appuyé pour bander l’arc, relâchez pour tirer"}, "it": {"idle": ["Tieni premuto per tendere l’arco", "spazio o pressione lunga · rilascia per scoccare"], "early": ["Tendi l’arco fino in fondo", "tieni premuto finché trema"], "full": ["Rilascia", "per scoccare"], "aria": "Arciere: tieni premuto per tendere l’arco, rilascia per scoccare"}, "de": {"idle": ["Gedrückt halten, um den Bogen zu spannen", "Leertaste oder lange tippen · loslassen zum Schießen"], "early": ["Spanne den Bogen ganz", "halten, bis er zittert"], "full": ["Loslassen", "zum Schießen"], "aria": "Bogenschütze: gedrückt halten zum Spannen, loslassen zum Schießen"}, "el": {"idle": ["Κράτα πατημένο για να τεντώσεις το τόξο", "διάστημα ή παρατεταμένο άγγιγμα · άφησε για να ρίξεις"], "early": ["Τέντωσε το τόξο ως το τέλος", "κράτα μέχρι να τρέμει"], "full": ["Άφησε", "για να ρίξεις"], "aria": "Τοξότης: κράτα πατημένο για να τεντώσεις το τόξο, άφησε για να ρίξεις"}, "ja": {"idle": ["長押しで弓を引く", "スペースキーまたは長押し · 離すと矢を放ちます"], "early": ["最後まで弓を引いてください", "震えるまで押し続けて"], "full": ["離す", "矢を放つ"], "aria": "射手：長押しで弓を引き、離すと矢を放ちます"}, "zh": {"idle": ["长按拉弓", "空格键或长按 · 松开即可放箭"], "early": ["把弓拉满", "按住直到弓开始颤动"], "full": ["松开", "放箭"], "aria": "弓箭手：长按拉弓，松开放箭"}, "ko": {"idle": ["길게 눌러 활을 당기세요", "스페이스 또는 길게 누르기 · 놓으면 화살을 쏩니다"], "early": ["활을 끝까지 당기세요", "떨릴 때까지 누르세요"], "full": ["놓기", "화살 쏘기"], "aria": "궁수: 길게 눌러 활을 당기고, 놓으면 화살을 쏩니다"}, "ru": {"idle": ["Удерживайте, чтобы натянуть лук", "пробел или долгое нажатие · отпустите, чтобы выстрелить"], "early": ["Натяните лук до конца", "держите, пока он не задрожит"], "full": ["Отпустите", "чтобы выстрелить"], "aria": "Лучник: удерживайте, чтобы натянуть лук, отпустите, чтобы выстрелить"}, "ar": {"idle": ["اضغط مطوّلًا لشدّ القوس", "المسافة أو ضغطة طويلة · اترك لإطلاق السهم"], "early": ["شدّ القوس حتى النهاية", "استمر بالضغط حتى يرتجف"], "full": ["اترك", "لإطلاق السهم"], "aria": "رامٍ: اضغط مطوّلًا لشدّ القوس، واترك لإطلاق السهم"}};
 const LANG=(()=>{const list=[...(navigator.languages||[]),navigator.language||'es'];
   for(const l of list){const k=String(l).toLowerCase().split('-')[0];if(STR[k])return k;}return 'es';})();
 const T=STR[LANG];
@@ -273,12 +260,12 @@ function release(){
   state='fired';cv.classList.remove('held');clearTimeout(heartTimer);firedAt=performance.now();
   const t=ctx.currentTime+.01;
   heldNotes.forEach(g=>{try{g.gain.cancelScheduledValues(t);g.gain.setTargetAtTime(0,t,.04)}catch(e){}});
-  [43,48,60].forEach((m,k)=>tone(m,t+k*.012,4*SPB,1));   // la cuerda se pulsa: Sol + Do + Do
+  [43,48,60].forEach((m,k)=>tone(m,t+k*.012,4*SPB,1));   // acorde final: Sol + Do + Do
   const g=amb.swell.gain;g.cancelScheduledValues(t);g.setValueAtTime(1.6,t);g.linearRampToValueAtTime(1,t+(4+1.5)*SPB);
-  flash=reduce?0:.35;shake=reduce?0:.45;vib=1;
-  for(let k=0;k<6;k++)waves.push({r:0,d:k*.09,a:.55-k*.07});
+  flash=reduce?0:.7;shake=reduce?0:.8;vib=1;arrowX=0;arrowV=.02;arrowA=1;
+  for(let k=0;k<4;k++)waves.push({r:0,d:k*.09,a:.45-k*.08});
   setHint('',false);
-  setTimeout(()=>{state='idle';setHint(hintHTML('idle'));},8000);
+  setTimeout(()=>{state='idle';arrowX=0;arrowV=0;arrowA=0;setHint(hintHTML('idle'));},7000);
 }
 cv.addEventListener('pointerdown',e=>{e.preventDefault();cv.setPointerCapture?.(e.pointerId);press();});
 addEventListener('pointerup',release);addEventListener('pointercancel',release);
@@ -291,7 +278,7 @@ addEventListener('contextmenu',e=>e.preventDefault());
 // Se borran la cuerda y la flecha originales; la cuerda se dibuja aparte para animarla.
 const FIG_SVG="<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"593\" height=\"590\" viewBox=\"0 0 593.000000 590.000000\" preserveAspectRatio=\"xMidYMid meet\"> <g transform=\"translate(0.000000,590.000000) scale(0.100000,-0.100000)\" fill=\"#c4683a\" stroke=\"none\"> <path d=\"M3156 5725 c-24 -24 -19 -114 6 -99 10 7 21 22 -521 -736 -211 -294 -387 -539 -391 -544 -5 -4 -28 -1 -52 8 -38 15 -64 16 -203 8 -157 -9 -162 -10 -279 -56 -267 -104 -466 -244 -466 -329 0 -48 24 -79 177 -224 123 -116 166 -151 243 -193 52 -28 102 -58 112 -67 11 -9 37 -55 59 -102 23 -48 58 -108 79 -136 20 -27 63 -99 93 -160 34 -66 83 -142 122 -190 87 -103 108 -146 100 -195 -4 -22 -2 -47 5 -59 40 -75 232 -72 345 5 20 13 40 24 46 24 5 0 33 16 62 35 51 34 51 35 22 36 -24 0 -21 3 20 14 33 9 60 24 82 48 17 20 34 30 36 24 3 -10 -26 -34 -147 -125 -50 -37 -180 -100 -244 -118 -42 -12 -76 -15 -114 -10 -60 8 -118 37 -118 61 0 8 -4 15 -10 15 -5 0 -10 -15 -10 -34 0 -18 -7 -50 -15 -70 -8 -20 -22 -66 -31 -104 -9 -38 -36 -105 -65 -156 -27 -49 -49 -101 -49 -115 0 -14 -8 -66 -19 -116 -24 -105 -19 -164 29 -335 16 -58 31 -121 34 -140 l5 -35 -10 35 c-45 146 -71 244 -80 300 -11 72 -19 89 -19 42 0 -55 47 -265 103 -458 81 -280 99 -362 113 -516 3 -43 8 -78 10 -78 2 0 20 11 40 25 20 14 44 25 53 25 9 1 30 7 46 14 l30 14 -33 12 c-18 7 -37 20 -42 30 -13 24 -80 634 -80 725 0 110 19 292 40 383 39 164 118 276 347 487 l118 109 -145 -149 c-209 -214 -282 -336 -325 -540 -25 -115 -24 -359 4 -610 31 -288 29 -277 54 -264 12 7 48 10 91 6 64 -5 68 -4 37 7 -18 6 -39 19 -46 29 -16 22 -40 516 -32 673 9 183 42 312 120 469 42 85 110 187 147 220 12 11 -3 -14 -34 -55 -63 -84 -144 -241 -174 -340 -37 -122 -47 -208 -46 -415 0 -248 10 -361 30 -344 7 6 66 16 131 21 148 13 161 23 95 71 -55 39 -54 39 -72 192 -12 111 -13 366 0 460 19 144 96 364 150 425 l31 35 -30 -49 c-107 -174 -162 -439 -147 -705 3 -63 8 -116 10 -119 2 -2 16 4 29 13 21 13 48 16 153 13 83 -2 128 1 131 8 2 5 -27 35 -63 64 -93 75 -118 131 -118 255 1 150 43 317 125 497 27 59 49 114 49 122 0 21 17 29 24 10 3 -8 2 -13 -3 -10 -5 3 -12 -6 -16 -21 -3 -15 -26 -70 -50 -123 -100 -218 -140 -453 -100 -588 16 -54 40 -83 150 -180 l60 -53 -24 -20 c-22 -18 -37 -20 -153 -17 -125 2 -129 2 -153 -22 -13 -14 -28 -41 -31 -60 l-7 -35 22 19 c19 17 43 21 176 26 103 5 159 11 169 20 18 14 21 46 5 55 -6 4 -8 13 -5 21 3 8 -8 50 -24 94 -44 120 -63 228 -64 375 -1 119 1 137 28 215 16 47 38 117 48 155 15 61 17 63 12 22 -3 -27 -21 -101 -41 -165 -31 -105 -35 -129 -34 -232 0 -63 5 -140 10 -170 17 -86 93 -320 103 -314 4 3 8 38 8 78 0 134 26 224 85 295 15 17 38 52 51 79 14 26 22 36 18 22 -23 -90 -13 -130 32 -130 19 0 24 5 24 26 0 15 -8 33 -17 40 -15 11 -16 15 -4 26 8 7 11 8 8 2 -4 -6 2 -19 13 -29 25 -23 25 -47 0 -70 -17 -15 -24 -16 -45 -7 -13 6 -27 23 -31 37 -8 33 -14 32 -47 -15 -39 -55 -56 -110 -67 -218 -9 -84 -8 -99 9 -137 29 -66 92 -153 176 -245 141 -153 163 -194 204 -379 17 -75 42 -153 57 -181 15 -27 64 -84 109 -127 85 -82 159 -176 238 -305 l48 -77 -3 -86 c-3 -82 -1 -87 22 -105 33 -25 68 -31 116 -20 58 14 132 12 194 -6 68 -19 245 -27 283 -12 26 10 47 51 33 65 -4 4 -36 10 -71 14 -53 5 -80 15 -147 56 -46 27 -109 59 -141 72 -73 30 -90 53 -157 211 -29 69 -117 255 -197 413 -98 197 -146 304 -150 335 -7 55 -14 69 -58 128 -19 25 -36 61 -40 86 -25 158 -110 413 -201 606 l-54 115 -30 -28 c-17 -16 -30 -24 -30 -17 0 17 124 118 231 188 52 35 187 111 298 169 246 128 352 196 455 295 115 109 167 199 187 322 12 76 -2 162 -52 310 -30 89 -39 132 -39 183 0 61 -2 67 -22 73 -20 6 -18 7 12 12 50 7 47 34 -5 38 -22 2 -47 10 -57 18 -14 14 -17 14 -26 -3 -6 -10 -13 -15 -16 -12 -3 3 5 21 19 39 14 18 28 49 31 67 7 39 39 62 58 42 8 -9 8 -10 -1 -5 -14 7 -43 -3 -43 -15 0 -5 17 -7 38 -4 26 3 33 2 22 -5 -8 -5 -24 -10 -35 -10 -11 0 -25 -11 -31 -23 -10 -23 -10 -24 40 -19 59 5 74 15 57 35 -9 12 -8 16 4 21 16 6 22 66 7 66 -5 0 -14 11 -20 24 -8 18 -17 23 -34 20 -19 -5 -20 -4 -6 5 20 13 131 0 197 -24 52 -18 77 -19 153 -3 l58 12 -63 26 c-58 25 -71 26 -194 24 l-131 -2 4 36 c3 20 21 102 39 182 45 193 49 241 31 328 -22 104 -68 184 -161 277 -102 103 -228 186 -485 320 -314 163 -502 299 -544 394 -11 22 -23 38 -27 35 -17 -10 -9 5 12 25 24 22 23 64 -2 69 -9 2 -24 -4 -33 -13z m19 -124 c-3 -5 0 -21 7 -36 8 -18 14 -22 20 -13 6 10 8 8 8 -4 0 -47 306 -264 560 -398 205 -108 309 -178 401 -270 127 -126 180 -264 159 -412 -10 -72 -69 -306 -94 -373 -20 -54 -20 -75 2 -76 11 0 12 -2 4 -6 -7 -3 -18 0 -25 5 -15 13 -65 -26 -99 -77 -35 -52 -105 -69 -333 -82 -207 -11 -280 -24 -368 -68 -53 -26 -62 -27 -108 -18 -64 13 -269 -8 -317 -31 -37 -19 -122 -104 -122 -123 0 -7 -3 -10 -6 -6 -12 11 38 77 82 109 40 28 43 33 27 42 -10 6 -61 11 -115 11 l-96 1 -39 50 c-22 27 -38 55 -35 62 2 7 -6 13 -20 13 l-23 2 23 4 c17 3 21 9 17 24 -5 15 -1 19 19 19 14 0 26 4 26 9 0 5 -12 47 -27 92 -26 79 -27 83 -9 93 11 6 27 18 35 26 15 14 91 9 751 -47 404 -34 737 -60 739 -57 2 2 1 7 -2 11 -4 3 -335 35 -735 69 -400 34 -728 63 -729 63 -2 1 -3 10 -3 20 0 42 -50 71 -220 122 -73 23 -197 22 -238 0 -34 -18 -21 -23 29 -12 87 20 168 14 237 -19 l64 -30 -29 -34 c-26 -32 -31 -33 -78 -28 -27 3 -52 8 -55 12 -3 4 -36 17 -74 30 -56 18 -70 20 -77 9 -7 -11 -9 -11 -9 3 0 9 -9 23 -21 31 -20 15 -13 26 243 384 145 202 352 491 459 640 107 150 195 273 197 273 2 0 1 -4 -3 -9z m-1015 -1438 c0 -22 34 -14 73 18 24 20 35 24 30 13 -6 -15 1 -16 78 -10 46 4 91 12 101 17 21 12 75 12 82 0 7 -11 -79 -77 -157 -121 -32 -18 -56 -37 -55 -42 2 -5 7 -9 12 -8 8 2 26 -19 26 -31 0 -3 -6 -6 -14 -6 -8 0 -32 39 -56 91 -23 50 -44 86 -47 79 -2 -6 10 -39 26 -72 17 -33 31 -62 31 -63 0 -2 -10 -4 -22 -5 -13 0 -49 -9 -81 -19 -31 -9 -60 -14 -65 -10 -4 4 -7 35 -7 68 0 48 4 62 20 74 18 14 18 16 3 57 -28 74 -29 83 -3 32 13 -27 25 -56 25 -62z m-162 26 c51 -10 62 -15 62 -31 0 -11 8 -22 18 -24 14 -4 17 -16 15 -72 0 -37 -4 -79 -8 -95 -19 -72 31 -157 91 -157 19 0 34 -3 33 -7 -2 -28 -22 -47 -74 -72 l-60 -28 -61 34 c-33 18 -82 36 -109 40 -38 5 -55 14 -81 43 -43 47 -145 99 -211 107 l-52 6 42 30 c23 17 67 56 97 88 89 93 181 160 210 155 14 -3 53 -11 88 -17z m622 3 c0 -4 18 -6 39 -4 21 2 47 2 57 0 29 -6 -35 -37 -84 -40 -22 -2 -38 -5 -36 -7 2 -2 -1 -10 -8 -18 -9 -11 -4 -13 29 -7 28 4 43 2 48 -6 6 -10 2 -11 -16 -7 -26 6 -121 -27 -99 -35 21 -7 -19 -84 -42 -80 -12 2 -18 -4 -18 -17 0 -15 9 -22 38 -27 55 -10 72 -29 72 -82 0 -35 3 -43 15 -39 8 4 17 2 20 -3 4 -6 18 -10 33 -9 l27 1 -27 10 c-28 10 -39 38 -15 38 18 0 31 -11 72 -59 24 -30 35 -51 31 -64 -3 -11 2 -33 10 -48 36 -70 -51 -121 -106 -61 -11 12 -28 22 -37 22 -8 0 -33 15 -54 33 -21 17 -52 43 -69 56 -42 32 -51 61 -52 153 0 84 -7 97 -55 102 -22 2 -29 9 -31 30 -2 14 1 26 6 26 14 0 154 94 182 123 23 23 70 36 70 19z m-307 -217 c9 -19 12 -35 7 -35 -6 0 -10 -6 -10 -13 0 -19 -47 -60 -59 -53 -6 4 -9 1 -5 -7 8 -22 -62 -52 -92 -39 -33 16 -56 56 -52 93 3 32 5 33 76 50 40 10 80 23 90 28 25 15 27 14 45 -24z m1897 -260 c0 -16 21 -87 71 -240 22 -66 44 -147 49 -180 38 -234 -146 -458 -544 -661 -132 -68 -292 -165 -394 -241 -87 -64 -192 -159 -208 -186 -8 -15 -13 -16 -16 -7 -2 8 11 27 29 43 18 16 37 45 42 65 9 32 7 41 -19 81 l-30 44 0 -44 c-1 -24 -8 -57 -16 -74 -8 -16 -11 -21 -8 -10 4 11 10 54 14 95 l7 75 -50 110 c-28 61 -54 113 -57 117 -3 5 -7 -24 -8 -64 -3 -78 -32 -167 -45 -135 -4 10 -3 16 1 13 12 -7 32 85 32 145 0 41 -7 60 -38 107 -21 31 -46 76 -57 100 -10 24 -27 49 -37 56 -17 12 -17 20 -3 157 8 79 15 189 15 245 0 64 4 104 12 112 7 7 37 12 68 12 99 1 199 19 273 50 51 21 88 30 128 30 95 0 246 37 394 97 77 32 172 66 211 78 82 24 184 29 184 10z\"/> <path d=\"M1976 1809 c-4 -19 -18 -94 -31 -168 -19 -105 -32 -149 -59 -202 -31 -59 -36 -78 -36 -137 0 -38 -4 -93 -10 -121 -5 -29 -19 -160 -31 -293 -21 -249 -42 -360 -81 -432 -19 -33 -38 -49 -103 -82 -44 -22 -109 -56 -144 -74 -41 -22 -83 -35 -118 -38 -62 -5 -71 -14 -49 -47 22 -33 84 -51 133 -38 22 5 51 6 68 1 20 -5 46 -3 78 7 89 29 139 34 219 22 57 -8 83 -8 102 1 43 19 46 39 19 126 -25 78 -26 79 -9 140 10 33 46 122 81 196 91 194 99 226 90 375 -6 112 -5 126 14 163 12 23 21 54 21 69 0 15 -27 120 -59 233 -33 113 -62 228 -66 255 -10 70 -20 85 -29 44z\"/> <path d=\"M3006 1677 c-9 -36 -6 -256 5 -332 15 -103 13 -170 -10 -282 -12 -56 -21 -126 -21 -157 l0 -56 63 0 62 0 -1 72 c-1 40 0 60 2 43 2 -16 7 -49 10 -72 l5 -43 56 0 56 0 -6 248 c-6 284 -14 327 -73 395 -36 42 -40 44 -47 24 -19 -51 -18 -134 2 -224 25 -113 26 -140 1 -223 -23 -81 -26 -61 -3 31 16 67 16 73 -5 177 -25 124 -26 151 -11 220 11 45 10 53 -9 79 -11 16 -31 50 -45 75 -22 42 -26 45 -31 25z\"/> <path d=\"M2942 1625 c-28 -13 -45 -28 -49 -44 -3 -13 -1 -79 6 -145 15 -164 14 -214 -8 -347 -11 -63 -23 -142 -26 -177 l-7 -63 53 3 54 3 6 85 c4 47 15 117 24 155 13 55 16 90 10 165 -4 52 -10 160 -14 240 l-6 145 -43 -20z\"/> <path d=\"M2800 1578 c0 -18 7 -71 15 -118 21 -116 20 -119 -19 -135 -25 -11 -35 -22 -40 -46 -8 -41 -8 -274 1 -361 l6 -68 43 0 44 0 0 38 c0 22 12 106 26 188 23 129 25 162 18 249 -5 55 -8 142 -9 193 l0 92 -42 0 c-42 0 -43 -1 -43 -32z\"/> <path d=\"M2734 1405 c-11 -28 -47 -38 -159 -45 -66 -4 -119 -12 -133 -21 -21 -13 -49 -75 -39 -85 3 -3 22 3 44 14 36 19 105 32 248 47 72 8 125 29 125 49 0 13 -57 56 -74 56 -4 0 -9 -7 -12 -15z\"/> <path d=\"M3224 1380 c4 -19 9 -146 13 -282 l5 -248 27 6 c14 3 45 15 69 26 49 23 50 28 27 172 -8 52 -14 115 -13 140 1 40 -5 56 -45 115 -26 37 -57 76 -68 87 l-22 19 7 -35z\"/> <path d=\"M2683 1303 c-24 -2 -43 -5 -43 -6 23 -121 26 -180 14 -248 -7 -41 -13 -107 -14 -147 l0 -73 48 7 c26 3 50 9 54 13 4 3 2 88 -4 188 -7 132 -7 191 1 214 14 42 14 59 -1 57 -7 -1 -32 -3 -55 -5z\"/> <path d=\"M2124 1214 c-20 -30 -20 -42 -14 -244 1 -49 -3 -90 -14 -119 -21 -56 -21 -56 9 -69 57 -26 58 -23 51 111 -4 67 -9 150 -12 185 -4 38 -1 74 5 91 7 17 9 36 3 50 l-8 23 -20 -28z\"/> <path d=\"M2600 1069 c-19 -11 -45 -19 -57 -19 -30 0 -38 -44 -18 -99 8 -24 15 -67 15 -96 l0 -53 43 13 42 12 6 109 c3 60 9 119 13 132 9 26 3 26 -44 1z\"/> <path d=\"M2464 1013 c3 -21 9 -52 12 -70 5 -24 1 -39 -15 -59 -13 -17 -21 -41 -21 -67 0 -39 0 -39 33 -33 17 3 38 14 45 23 17 23 15 82 -4 134 -8 24 -13 59 -10 77 4 29 2 32 -21 32 -24 0 -25 -2 -19 -37z\"/> <path d=\"M2412 920 c-12 -10 -48 -26 -79 -35 -32 -9 -68 -29 -84 -45 -26 -26 -29 -35 -29 -97 0 -37 -3 -85 -6 -105 -5 -30 -3 -39 10 -44 30 -12 41 14 47 117 8 118 16 131 94 148 67 15 111 47 94 67 -15 18 -19 17 -47 -6z\"/> <path d=\"M3357 816 c-27 -20 -40 -21 -295 -22 -316 -2 -367 -6 -492 -40 -52 -15 -138 -34 -190 -43 l-95 -17 -3 -43 -3 -43 98 6 c176 13 266 26 403 62 167 44 273 52 391 30 47 -9 99 -16 116 -16 46 0 79 32 93 90 7 28 11 53 9 54 -2 2 -17 -6 -32 -18z\"/> <path d=\"M2030 698 c-11 -23 -20 -43 -20 -44 0 -5 140 -34 163 -34 20 0 25 6 30 37 8 47 3 53 -39 53 -19 0 -51 7 -71 15 -19 8 -37 15 -39 15 -2 0 -13 -19 -24 -42z\"/> </g> </svg> ";
 const FIG_W=593,FIG_H=590;
-const A_TOP={x:318.5,y:21},A_BOT={x:321,y:378},A_HAND={x:225,y:157};   // puntas del arco y mano (unidades del SVG)
+const A_TOP={x:318.5,y:21},A_BOT={x:321,y:378},A_HAND={x:226,y:163},A_GRIP={x:430,y:182.5},A_ARROW=228;   // puntas del arco y mano (unidades del SVG)
 const figImg=new Image();let figReady=false,figCanvas=null,figKey='';
 figImg.onload=()=>{figReady=true;figKey='';};
 figImg.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(FIG_SVG);
@@ -324,8 +311,8 @@ function frame(now){
   else if(state==='relaxing'){draw+=(0-draw)*.07;if(draw<.003){draw=0;state='idle';}}
   else if(state==='fired'){}
   else{draw+=(0-draw)*.02;}
-  // fase 1: montar la cuerda (Sol+Si♭ y Mi♭) · fase 2: tirar de ella hasta la cara (Re)
-  const s1=state==='fired'?1:ease(clamp01(draw/.66)),s2=state==='fired'?0:ease(clamp01((draw-.66)/.34));
+  // tirar de la cuerda hasta la cara durante toda la secuencia
+  const s2=state==='fired'?0:ease(clamp01(draw));
   const held=state==='full'?(t-fullAt):0;
   const tension=state==='fired'?.3:draw;
   layout();buildFigure();
@@ -372,23 +359,32 @@ function frame(now){
   const fs=performance.now()-firedAt;
   if(state==='fired'||vib>0){vib=Math.max(0,1-fs/6500);}
   const midY=(top.y+bot.y)/2,midX=(top.x+bot.x)/2;
+  const lineX=top.x+(bot.x-top.x)*((hand.y-top.y)/(bot.y-top.y));
+  const N={x:lineX+(hand.x-lineX)*s2,y:hand.y};              // punto donde la flecha toca la cuerda
   if(vib>0){
     const amp=FIG_H*S*.04*Math.pow(vib,1.6);
     for(let k=4;k>=0;k--){const ph=now/7+k*1.3,off=Math.sin(ph)*amp+Math.sin(ph*2.1)*amp*.25;
       drawString(quadPts(top,{x:midX+off*2,y:midY},bot,40),k?.18:1,k?.3*vib:.3+.6*vib,!k);}
-    loopAt(top,1);loopAt(bot,1);
-  }else if(s1>=1){
-    // montada; con la fase 2 la mano la lleva hacia la cara
-    const lineX=top.x+(bot.x-top.x)*((hand.y-top.y)/(bot.y-top.y));
-    const N={x:lineX+(hand.x-lineX)*s2,y:hand.y};
-    drawString(linePts([top,N,bot],24),1,.55*tension,true);loopAt(top,1);loopAt(bot,1);
-  }else{
-    // desmontada: cuelga de la punta inferior y sube hasta la superior
-    const E0={x:bot.x-FIG_W*S*.09,y:bot.y-FIG_H*S*.22};
-    const E={x:E0.x+(top.x-E0.x)*s1,y:E0.y+(top.y-E0.y)*s1};
-    const sag=FIG_H*S*.12*(1-s1)*(1-s1);
-    drawString(quadPts(bot,{x:(bot.x+E.x)/2-sag,y:(bot.y+E.y)/2+sag*.4},E,40),.95,.45*s1,true);
-    loopAt(bot,1);loopAt(E,.95);
+  }else drawString(linePts([top,N,bot],24),1,.55*tension,true);
+  loopAt(top,1);loopAt(bot,1);
+
+  // flecha: apoyada en la mano del arco, con el culatín en la cuerda; al soltar sale volando
+  {const G=P(A_GRIP),dx=G.x-N.x,dy=G.y-N.y,dl=Math.hypot(dx,dy),ux=dx/dl,uy=dy/dl,L=A_ARROW*S;
+    if(state==='fired'){arrowV*=1.09;arrowX+=arrowV*W;}
+    else if(arrowA<1)arrowA=Math.min(1,arrowA+.015);
+    const a0=state==='fired'?{x:lineX+ux*arrowX,y:hand.y+uy*arrowX}:N;
+    const al=state==='fired'?Math.max(0,1-arrowX/(W*1.4)):arrowA;
+    if(al>0){
+      g2.save();g2.globalAlpha=al;g2.translate(a0.x,a0.y);g2.rotate(Math.atan2(uy,ux));
+      if(state==='fired'){const tr=g2.createLinearGradient(-W*.5,0,0,0);tr.addColorStop(0,'rgba(255,170,110,0)');tr.addColorStop(1,'rgba(255,200,150,.55)');
+        g2.strokeStyle=tr;g2.lineWidth=2*K;g2.beginPath();g2.moveTo(-Math.min(W*.5,arrowX),0);g2.lineTo(0,0);g2.stroke();}
+      g2.shadowColor=`rgba(255,170,110,${.4*tension})`;g2.shadowBlur=12*tension;
+      g2.strokeStyle='#c4683a';g2.lineWidth=2.2*K;g2.beginPath();g2.moveTo(0,0);g2.lineTo(L,0);g2.stroke();
+      g2.fillStyle='#c4683a';
+      [-1,1].forEach(sg=>{g2.beginPath();g2.moveTo(4*K,0);g2.lineTo(26*K,0);g2.lineTo(8*K,sg*6*K);g2.closePath();g2.fill();});
+      g2.beginPath();g2.moveTo(L+16*K,0);g2.lineTo(L-2*K,-5*K);g2.lineTo(L+2*K,0);g2.lineTo(L-2*K,5*K);g2.closePath();g2.fill();
+      g2.restore();
+    }
   }
   g2.restore();
   const waveC={x:midX,y:midY};
