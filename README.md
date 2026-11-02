@@ -6,7 +6,7 @@ An interactive recreation of the bow-stringing scene from Christopher Nolan's *T
 
 ## How it works
 
-1. **Press and hold** (mouse, long press or the space bar). The string is raised and hooked onto the bow while the music plays: G + B♭, then E♭ → D.
+1. **Press and hold** (mouse, long press or the space bar). The archer hooks the string onto the bow while the music plays (G + B♭, then E♭), and draws it back on the final D.
 2. When the bow is fully strung, it trembles and a heartbeat speeds up.
 3. **Release** to play the string: the final G–C chord rings out.
 
@@ -18,5 +18,6 @@ Sound starts after the first tap, since browsers block audio until the visitor i
 - Canvas 2D for the bow, string and atmosphere
 - Web Audio API for playback, reverb, echo and the tense background drone
 - Nylon guitar samples from the MusyngKite soundfont ([midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts))
+- Archer figure from a public-license SVG, styled after Greek red-figure pottery
 
 This is a fan-made recreation and is not affiliated with the film or its studio.
