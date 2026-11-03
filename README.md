@@ -18,6 +18,6 @@ Sound starts after the first tap, since browsers block audio until the visitor i
 - Canvas 2D for the bow, string and atmosphere
 - Web Audio API for playback, reverb, echo and the tense background drone
 - Nylon guitar samples from the MusyngKite soundfont ([midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts))
-- Archer figure from a public-license SVG, styled after Greek red-figure pottery
+- Archer figure from a public-license SVG, styled after Greek red-figure pottery, with painted anatomy (muscle relief, soft shading) and a drawing arm that follows the string with real two-bone kinematics
 
 This is a fan-made recreation and is not affiliated with the film or its studio.

@@ -299,7 +299,10 @@ const INK='#150b07';
 function drawArm(T,dest){
   const k=S*DPR,w=figCanvas.width,h=figCanvas.height;
   if(!armCanvas||armCanvas.width!==w||armCanvas.height!==h){armCanvas=document.createElement('canvas');armCanvas.width=w;armCanvas.height=h;}
-  const c=armCanvas.getContext('2d');c.clearRect(0,0,w,h);c.globalCompositeOperation='source-over';
+  const c=armCanvas.getContext('2d');
+  // el brazo solo ocupa esta zona del dibujo: se limpia y se compone únicamente ahí (mucho más barato)
+  const rx0=Math.max(0,Math.floor(64*k)),ry0=Math.max(0,Math.floor(94*k)),rw=Math.min(w-rx0,Math.ceil(290*k)),rh=Math.min(h-ry0,Math.ceil(176*k));
+  c.globalCompositeOperation='source-over';c.clearRect(rx0,ry0,rw,rh);
   const Sh=ARM_S,E=armIK(T);
   const bone=(A,B)=>{const dx=B.x-A.x,dy=B.y-A.y,l=Math.hypot(dx,dy),ux=dx/l,uy=dy/l;return{A,B,l,ux,uy,nx:-uy,ny:ux};};
   const up=bone(Sh,E),fo=bone(E,T);
@@ -334,17 +337,20 @@ function drawArm(T,dest){
   c.lineWidth=6.2*k;const th0=hp(5,-6.5),th1=hp(15,-12.5),th2=hp(23,-9.5);
   c.beginPath();c.moveTo(th0.x*k,th0.y*k);c.quadraticCurveTo(th1.x*k,th1.y*k,th2.x*k,th2.y*k);c.stroke();
 
-  // ---- sombreado: luz cenital desde la izquierda, borde claro arriba y sombra abajo
+  // ---- sombreado: manchas radiales suaves a lo largo de cada hueso (sin cortes rectos), luz arriba a la izquierda
   c.globalCompositeOperation='source-atop';
-  const shade=(b,tab,N,t0=0)=>{
-    const upSide=b.ny<0?1:-1;
-    const L=[],Rr=[];for(let q=0;q<=N;q++){const t=t0+(1-t0)*q/N;L.push(at(b,t,tab,1.05));Rr.push(at(b,t,tab,-1.05));}
-    const a=at(b,.4,tab,upSide*1.05),d=at(b,.4,tab,-upSide*1.05);
-    const g=c.createLinearGradient(a.x*k,a.y*k,d.x*k,d.y*k);
-    g.addColorStop(0,'rgba(255,226,175,.20)');g.addColorStop(.3,'rgba(255,205,150,.04)');g.addColorStop(.6,'rgba(70,24,8,.08)');g.addColorStop(1,'rgba(28,8,0,.40)');
-    c.save();c.beginPath();L.concat(Rr.reverse()).forEach((q,n)=>n?c.lineTo(q.x*k,q.y*k):c.moveTo(q.x*k,q.y*k));c.closePath();c.clip();
-    c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();};
-  shade(up,UPPER,16,.3);shade(fo,FORE,16);
+  const blob=(x,y,r,col,al)=>{const g=c.createRadialGradient(x*k,y*k,0,x*k,y*k,r*k);g.addColorStop(0,`rgba(${col},${al})`);g.addColorStop(1,`rgba(${col},0)`);
+    c.fillStyle=g;c.fillRect((x-r)*k,(y-r)*k,2*r*k,2*r*k);};
+  const shade=(b,tab,N,t0,t1,fade=()=>1)=>{
+    const dk=(b.nx*-.55+b.ny*-.83)>0?-1:1;                 // lado de la sombra: el opuesto a la luz
+    for(let q=0;q<=N;q++){
+      const t=t0+(t1-t0)*q/N,[pa,pb]=prof(tab,t),hw=(pa+pb)/2;
+      const d=at(b,t,tab,dk*.7),l=at(b,t,tab,-dk*.62),m=at(b,t,tab,dk*.25);
+      const f=fade(t);
+      blob(d.x,d.y,hw*1.05,'34,10,2',.34*f);blob(m.x,m.y,hw*.9,'60,20,6',.10*f);
+      blob(l.x,l.y,hw*.8,'255,222,170',.17*f);
+    }};
+  shade(up,UPPER,18,0,1,t=>smooth(Math.max(0,Math.min(1,(t-.04)/.42))));shade(fo,FORE,16,0,1);
   c.globalCompositeOperation='source-over';
 
   // ---- líneas de relieve, como en la pintura de vasos: tinta fina que marca los músculos
@@ -371,14 +377,19 @@ function drawArm(T,dest){
   // luz cálida general, igual que la figura
   c.globalCompositeOperation='source-atop';
   const lg=c.createLinearGradient(0,0,w,h);lg.addColorStop(0,'rgba(255,214,160,.28)');lg.addColorStop(.55,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(20,6,0,.45)');
-  c.fillStyle=lg;c.fillRect(0,0,w,h);
-  dest.drawImage(armCanvas,FX,FY,FIG_W*S,FIG_H*S);
+  c.fillStyle=lg;c.fillRect(rx0,ry0,rw,rh);
+  const sx=FIG_W*S/w,sy=FIG_H*S/h;
+  dest.drawImage(armCanvas,rx0,ry0,rw,rh,FX+rx0*sx,FY+ry0*sy,rw*sx,rh*sy);
 }
 const figImg=new Image();let figReady=false,figCanvas=null,figKey='';
 figImg.onload=()=>{figReady=true;figKey='';};
 figImg.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(FIG_SVG);
 let S=1,FX=0,FY=0;
-function layout(){S=Math.min(H*.76/FIG_H,W*.94/FIG_W);FX=(W-FIG_W*S)/2-FIG_W*S*.02;FY=Math.max(8,H*.06);}
+function layout(){
+  const fs=Math.max(20,Math.min(30,W*.032)),R=H*.035+fs*2.2+29;       // alto que ocupa el texto de abajo
+  S=Math.min((H-R-18)/FIG_H,H*.76/FIG_H,W*1.02/FIG_W);
+  FX=(W-FIG_W*S)/2-FIG_W*S*.02;FY=Math.max(8,(Math.min(H*.88,H-R-10)-FIG_H*S)/2);
+}
 const P=(v)=>({x:FX+v.x*S,y:FY+v.y*S});
 function buildFigure(){
   const key=W+'x'+H+'@'+DPR;if(!figReady||figKey===key)return;figKey=key;
@@ -393,12 +404,21 @@ function buildFigure(){
   c.beginPath();[[437,178.5],[477,186.5],[437,195]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));c.fill(); // punta
   // quitar el brazo que tira de la cuerda: se dibuja aparte para que se mueva
   c.beginPath();ARM_CUT.forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));c.closePath();c.fill();
-  // completar la parte de atrás de la cabeza que tapaba la mano
-  c.globalCompositeOperation='source-over';c.fillStyle='#c4683a';
-  c.save();c.beginPath();c.rect(220*k,140*k,22*k,80*k);c.clip();c.beginPath();c.ellipse(247*k,181*k,14*k,23*k,0,0,7);c.fill();c.restore();
+  // cabeza: en el dibujo original la mano tapaba la nuca y el pelo, así que se rehacen aquí.
+  // Pelo y gorro son un hueco oscuro con borde de barro (igual que la barba); nuca y oreja son piel.
+  const P2=(pts)=>{c.beginPath();pts.forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));c.closePath();};
+  c.globalCompositeOperation='destination-out';
+  P2([[221,157.5],[243.2,157.5],[243.2,190],[221,190]]);c.fill();
+  c.globalCompositeOperation='source-over';c.fillStyle=c.strokeStyle='#c4683a';
+  P2([[243.5,165.6],[236,164.6],[229,164.8],[224.4,165.6],[224.2,168.8],[229,168.4],[236,169.3],[243.5,171.6]]);c.fill();   // cinta del gorro
+  P2([[243.5,176.2],[236,182.4],[230,188.6],[230.8,191.4],[233,193.4],[243.5,181.8]]);c.fill();                                 // borde del gorro
+  P2([[243.5,181.7],[245.6,183.4],[247.6,185.2],[249.6,187.2],[248.8,192.5],[247,196],[245.8,207],[236,207],[234,203],[233.1,198],[233.4,193.4],[232,192.4]]);c.fill();   // sien, oreja, nuca y cuello
+  c.lineCap='round';c.lineJoin='round';c.lineWidth=2.5*k;
+  c.beginPath();c.moveTo(236.8*k,154.4*k);c.bezierCurveTo(229*k,155.5*k,224.4*k,162*k,224.2*k,171*k);
+  c.bezierCurveTo(224*k,180*k,227.4*k,189*k,233.4*k,193.4*k);c.stroke();                // contorno del pelo
   // rellenar la esquina del corte: el trapecio y el dorsal siguen en curva hasta el brazo
   c.globalCompositeOperation='source-over';c.fillStyle='#c4683a';c.beginPath();
-  [[182,248],[180,242],[179,236],[180,230],[184,225],[192,221],[214,216],[214,252]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));
+  [[183,249.5],[180.5,246],[179.2,242],[176.3,237],[176.1,228],[177.5,222],[192,219],[214,216],[214,252]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));
   c.closePath();c.fill();
   // ---- anatomía: sombras suaves y líneas de relieve sobre la figura (solo donde hay figura)
   c.globalCompositeOperation='source-atop';
@@ -409,9 +429,10 @@ function buildFigure(){
   soft(196,282,16,48,.25,.42);soft(292,276,9,34,0,.38);soft(225,270,24,9,0,.22);soft(272,272,24,9,0,.2);
   soft(246,318,30,10,0,.3);soft(250,238,34,10,0,.22);
   soft(236,252,18,14,0,.16,'255,226,175');soft(268,255,16,12,0,.14,'255,226,175');   // luz en lo alto de los pectorales
-  // brazo del arco: luz arriba, sombra abajo, y sombra de la mano sobre el codo
-  {const g=c.createLinearGradient(0,205*k,0,242*k);g.addColorStop(0,'rgba(255,226,175,.22)');g.addColorStop(.45,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(28,8,0,.5)');
-   c.save();c.beginPath();[[294,214],[350,206],[405,199],[432,195],[432,224],[400,222],[350,238],[294,248]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));c.closePath();c.clip();c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();}
+  // brazo del arco: luz arriba y sombra abajo, con manchas suaves (sin bordes duros)
+  for(let q=0;q<=12;q++){const u=q/12,x=298+u*118,y=232-u*21,hw=17-u*8;
+    soft(x,y-hw*.62,hw*1.15,hw*.8,-.16,.2,'255,226,175');
+    soft(x,y+hw*.7,hw*1.2,hw*.85,-.16,.27);}
   // piernas: sombra en el lado de la espalda de cada pantorrilla
   soft(384,505,12,34,-.45,.4);soft(194,520,11,36,.1,.38);soft(372,462,9,20,-.3,.3);
   c.globalCompositeOperation='source-atop';
