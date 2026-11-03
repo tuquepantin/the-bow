@@ -23,9 +23,6 @@ canvas.held{cursor:grabbing}
 #hint.off{opacity:0}
 .hidden-controls{display:none}
 </style>
-</head>
-<body>
-
 <canvas id="c" aria-label="Arquero: mantén pulsado para tensar el arco y suelta para disparar"></canvas>
 <p id="hint">Mantén pulsado para tensar el arco<small>espacio o toque largo · suelta para disparar</small></p>
 <div class="hidden-controls" aria-hidden="true">
@@ -279,36 +276,99 @@ addEventListener('contextmenu',e=>e.preventDefault());
 const FIG_SVG="<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"593\" height=\"590\" viewBox=\"0 0 593.000000 590.000000\" preserveAspectRatio=\"xMidYMid meet\"> <g transform=\"translate(0.000000,590.000000) scale(0.100000,-0.100000)\" fill=\"#c4683a\" stroke=\"none\"> <path d=\"M3156 5725 c-24 -24 -19 -114 6 -99 10 7 21 22 -521 -736 -211 -294 -387 -539 -391 -544 -5 -4 -28 -1 -52 8 -38 15 -64 16 -203 8 -157 -9 -162 -10 -279 -56 -267 -104 -466 -244 -466 -329 0 -48 24 -79 177 -224 123 -116 166 -151 243 -193 52 -28 102 -58 112 -67 11 -9 37 -55 59 -102 23 -48 58 -108 79 -136 20 -27 63 -99 93 -160 34 -66 83 -142 122 -190 87 -103 108 -146 100 -195 -4 -22 -2 -47 5 -59 40 -75 232 -72 345 5 20 13 40 24 46 24 5 0 33 16 62 35 51 34 51 35 22 36 -24 0 -21 3 20 14 33 9 60 24 82 48 17 20 34 30 36 24 3 -10 -26 -34 -147 -125 -50 -37 -180 -100 -244 -118 -42 -12 -76 -15 -114 -10 -60 8 -118 37 -118 61 0 8 -4 15 -10 15 -5 0 -10 -15 -10 -34 0 -18 -7 -50 -15 -70 -8 -20 -22 -66 -31 -104 -9 -38 -36 -105 -65 -156 -27 -49 -49 -101 -49 -115 0 -14 -8 -66 -19 -116 -24 -105 -19 -164 29 -335 16 -58 31 -121 34 -140 l5 -35 -10 35 c-45 146 -71 244 -80 300 -11 72 -19 89 -19 42 0 -55 47 -265 103 -458 81 -280 99 -362 113 -516 3 -43 8 -78 10 -78 2 0 20 11 40 25 20 14 44 25 53 25 9 1 30 7 46 14 l30 14 -33 12 c-18 7 -37 20 -42 30 -13 24 -80 634 -80 725 0 110 19 292 40 383 39 164 118 276 347 487 l118 109 -145 -149 c-209 -214 -282 -336 -325 -540 -25 -115 -24 -359 4 -610 31 -288 29 -277 54 -264 12 7 48 10 91 6 64 -5 68 -4 37 7 -18 6 -39 19 -46 29 -16 22 -40 516 -32 673 9 183 42 312 120 469 42 85 110 187 147 220 12 11 -3 -14 -34 -55 -63 -84 -144 -241 -174 -340 -37 -122 -47 -208 -46 -415 0 -248 10 -361 30 -344 7 6 66 16 131 21 148 13 161 23 95 71 -55 39 -54 39 -72 192 -12 111 -13 366 0 460 19 144 96 364 150 425 l31 35 -30 -49 c-107 -174 -162 -439 -147 -705 3 -63 8 -116 10 -119 2 -2 16 4 29 13 21 13 48 16 153 13 83 -2 128 1 131 8 2 5 -27 35 -63 64 -93 75 -118 131 -118 255 1 150 43 317 125 497 27 59 49 114 49 122 0 21 17 29 24 10 3 -8 2 -13 -3 -10 -5 3 -12 -6 -16 -21 -3 -15 -26 -70 -50 -123 -100 -218 -140 -453 -100 -588 16 -54 40 -83 150 -180 l60 -53 -24 -20 c-22 -18 -37 -20 -153 -17 -125 2 -129 2 -153 -22 -13 -14 -28 -41 -31 -60 l-7 -35 22 19 c19 17 43 21 176 26 103 5 159 11 169 20 18 14 21 46 5 55 -6 4 -8 13 -5 21 3 8 -8 50 -24 94 -44 120 -63 228 -64 375 -1 119 1 137 28 215 16 47 38 117 48 155 15 61 17 63 12 22 -3 -27 -21 -101 -41 -165 -31 -105 -35 -129 -34 -232 0 -63 5 -140 10 -170 17 -86 93 -320 103 -314 4 3 8 38 8 78 0 134 26 224 85 295 15 17 38 52 51 79 14 26 22 36 18 22 -23 -90 -13 -130 32 -130 19 0 24 5 24 26 0 15 -8 33 -17 40 -15 11 -16 15 -4 26 8 7 11 8 8 2 -4 -6 2 -19 13 -29 25 -23 25 -47 0 -70 -17 -15 -24 -16 -45 -7 -13 6 -27 23 -31 37 -8 33 -14 32 -47 -15 -39 -55 -56 -110 -67 -218 -9 -84 -8 -99 9 -137 29 -66 92 -153 176 -245 141 -153 163 -194 204 -379 17 -75 42 -153 57 -181 15 -27 64 -84 109 -127 85 -82 159 -176 238 -305 l48 -77 -3 -86 c-3 -82 -1 -87 22 -105 33 -25 68 -31 116 -20 58 14 132 12 194 -6 68 -19 245 -27 283 -12 26 10 47 51 33 65 -4 4 -36 10 -71 14 -53 5 -80 15 -147 56 -46 27 -109 59 -141 72 -73 30 -90 53 -157 211 -29 69 -117 255 -197 413 -98 197 -146 304 -150 335 -7 55 -14 69 -58 128 -19 25 -36 61 -40 86 -25 158 -110 413 -201 606 l-54 115 -30 -28 c-17 -16 -30 -24 -30 -17 0 17 124 118 231 188 52 35 187 111 298 169 246 128 352 196 455 295 115 109 167 199 187 322 12 76 -2 162 -52 310 -30 89 -39 132 -39 183 0 61 -2 67 -22 73 -20 6 -18 7 12 12 50 7 47 34 -5 38 -22 2 -47 10 -57 18 -14 14 -17 14 -26 -3 -6 -10 -13 -15 -16 -12 -3 3 5 21 19 39 14 18 28 49 31 67 7 39 39 62 58 42 8 -9 8 -10 -1 -5 -14 7 -43 -3 -43 -15 0 -5 17 -7 38 -4 26 3 33 2 22 -5 -8 -5 -24 -10 -35 -10 -11 0 -25 -11 -31 -23 -10 -23 -10 -24 40 -19 59 5 74 15 57 35 -9 12 -8 16 4 21 16 6 22 66 7 66 -5 0 -14 11 -20 24 -8 18 -17 23 -34 20 -19 -5 -20 -4 -6 5 20 13 131 0 197 -24 52 -18 77 -19 153 -3 l58 12 -63 26 c-58 25 -71 26 -194 24 l-131 -2 4 36 c3 20 21 102 39 182 45 193 49 241 31 328 -22 104 -68 184 -161 277 -102 103 -228 186 -485 320 -314 163 -502 299 -544 394 -11 22 -23 38 -27 35 -17 -10 -9 5 12 25 24 22 23 64 -2 69 -9 2 -24 -4 -33 -13z m19 -124 c-3 -5 0 -21 7 -36 8 -18 14 -22 20 -13 6 10 8 8 8 -4 0 -47 306 -264 560 -398 205 -108 309 -178 401 -270 127 -126 180 -264 159 -412 -10 -72 -69 -306 -94 -373 -20 -54 -20 -75 2 -76 11 0 12 -2 4 -6 -7 -3 -18 0 -25 5 -15 13 -65 -26 -99 -77 -35 -52 -105 -69 -333 -82 -207 -11 -280 -24 -368 -68 -53 -26 -62 -27 -108 -18 -64 13 -269 -8 -317 -31 -37 -19 -122 -104 -122 -123 0 -7 -3 -10 -6 -6 -12 11 38 77 82 109 40 28 43 33 27 42 -10 6 -61 11 -115 11 l-96 1 -39 50 c-22 27 -38 55 -35 62 2 7 -6 13 -20 13 l-23 2 23 4 c17 3 21 9 17 24 -5 15 -1 19 19 19 14 0 26 4 26 9 0 5 -12 47 -27 92 -26 79 -27 83 -9 93 11 6 27 18 35 26 15 14 91 9 751 -47 404 -34 737 -60 739 -57 2 2 1 7 -2 11 -4 3 -335 35 -735 69 -400 34 -728 63 -729 63 -2 1 -3 10 -3 20 0 42 -50 71 -220 122 -73 23 -197 22 -238 0 -34 -18 -21 -23 29 -12 87 20 168 14 237 -19 l64 -30 -29 -34 c-26 -32 -31 -33 -78 -28 -27 3 -52 8 -55 12 -3 4 -36 17 -74 30 -56 18 -70 20 -77 9 -7 -11 -9 -11 -9 3 0 9 -9 23 -21 31 -20 15 -13 26 243 384 145 202 352 491 459 640 107 150 195 273 197 273 2 0 1 -4 -3 -9z m-1015 -1438 c0 -22 34 -14 73 18 24 20 35 24 30 13 -6 -15 1 -16 78 -10 46 4 91 12 101 17 21 12 75 12 82 0 7 -11 -79 -77 -157 -121 -32 -18 -56 -37 -55 -42 2 -5 7 -9 12 -8 8 2 26 -19 26 -31 0 -3 -6 -6 -14 -6 -8 0 -32 39 -56 91 -23 50 -44 86 -47 79 -2 -6 10 -39 26 -72 17 -33 31 -62 31 -63 0 -2 -10 -4 -22 -5 -13 0 -49 -9 -81 -19 -31 -9 -60 -14 -65 -10 -4 4 -7 35 -7 68 0 48 4 62 20 74 18 14 18 16 3 57 -28 74 -29 83 -3 32 13 -27 25 -56 25 -62z m-162 26 c51 -10 62 -15 62 -31 0 -11 8 -22 18 -24 14 -4 17 -16 15 -72 0 -37 -4 -79 -8 -95 -19 -72 31 -157 91 -157 19 0 34 -3 33 -7 -2 -28 -22 -47 -74 -72 l-60 -28 -61 34 c-33 18 -82 36 -109 40 -38 5 -55 14 -81 43 -43 47 -145 99 -211 107 l-52 6 42 30 c23 17 67 56 97 88 89 93 181 160 210 155 14 -3 53 -11 88 -17z m622 3 c0 -4 18 -6 39 -4 21 2 47 2 57 0 29 -6 -35 -37 -84 -40 -22 -2 -38 -5 -36 -7 2 -2 -1 -10 -8 -18 -9 -11 -4 -13 29 -7 28 4 43 2 48 -6 6 -10 2 -11 -16 -7 -26 6 -121 -27 -99 -35 21 -7 -19 -84 -42 -80 -12 2 -18 -4 -18 -17 0 -15 9 -22 38 -27 55 -10 72 -29 72 -82 0 -35 3 -43 15 -39 8 4 17 2 20 -3 4 -6 18 -10 33 -9 l27 1 -27 10 c-28 10 -39 38 -15 38 18 0 31 -11 72 -59 24 -30 35 -51 31 -64 -3 -11 2 -33 10 -48 36 -70 -51 -121 -106 -61 -11 12 -28 22 -37 22 -8 0 -33 15 -54 33 -21 17 -52 43 -69 56 -42 32 -51 61 -52 153 0 84 -7 97 -55 102 -22 2 -29 9 -31 30 -2 14 1 26 6 26 14 0 154 94 182 123 23 23 70 36 70 19z m-307 -217 c9 -19 12 -35 7 -35 -6 0 -10 -6 -10 -13 0 -19 -47 -60 -59 -53 -6 4 -9 1 -5 -7 8 -22 -62 -52 -92 -39 -33 16 -56 56 -52 93 3 32 5 33 76 50 40 10 80 23 90 28 25 15 27 14 45 -24z m1897 -260 c0 -16 21 -87 71 -240 22 -66 44 -147 49 -180 38 -234 -146 -458 -544 -661 -132 -68 -292 -165 -394 -241 -87 -64 -192 -159 -208 -186 -8 -15 -13 -16 -16 -7 -2 8 11 27 29 43 18 16 37 45 42 65 9 32 7 41 -19 81 l-30 44 0 -44 c-1 -24 -8 -57 -16 -74 -8 -16 -11 -21 -8 -10 4 11 10 54 14 95 l7 75 -50 110 c-28 61 -54 113 -57 117 -3 5 -7 -24 -8 -64 -3 -78 -32 -167 -45 -135 -4 10 -3 16 1 13 12 -7 32 85 32 145 0 41 -7 60 -38 107 -21 31 -46 76 -57 100 -10 24 -27 49 -37 56 -17 12 -17 20 -3 157 8 79 15 189 15 245 0 64 4 104 12 112 7 7 37 12 68 12 99 1 199 19 273 50 51 21 88 30 128 30 95 0 246 37 394 97 77 32 172 66 211 78 82 24 184 29 184 10z\"/> <path d=\"M1976 1809 c-4 -19 -18 -94 -31 -168 -19 -105 -32 -149 -59 -202 -31 -59 -36 -78 -36 -137 0 -38 -4 -93 -10 -121 -5 -29 -19 -160 -31 -293 -21 -249 -42 -360 -81 -432 -19 -33 -38 -49 -103 -82 -44 -22 -109 -56 -144 -74 -41 -22 -83 -35 -118 -38 -62 -5 -71 -14 -49 -47 22 -33 84 -51 133 -38 22 5 51 6 68 1 20 -5 46 -3 78 7 89 29 139 34 219 22 57 -8 83 -8 102 1 43 19 46 39 19 126 -25 78 -26 79 -9 140 10 33 46 122 81 196 91 194 99 226 90 375 -6 112 -5 126 14 163 12 23 21 54 21 69 0 15 -27 120 -59 233 -33 113 -62 228 -66 255 -10 70 -20 85 -29 44z\"/> <path d=\"M3006 1677 c-9 -36 -6 -256 5 -332 15 -103 13 -170 -10 -282 -12 -56 -21 -126 -21 -157 l0 -56 63 0 62 0 -1 72 c-1 40 0 60 2 43 2 -16 7 -49 10 -72 l5 -43 56 0 56 0 -6 248 c-6 284 -14 327 -73 395 -36 42 -40 44 -47 24 -19 -51 -18 -134 2 -224 25 -113 26 -140 1 -223 -23 -81 -26 -61 -3 31 16 67 16 73 -5 177 -25 124 -26 151 -11 220 11 45 10 53 -9 79 -11 16 -31 50 -45 75 -22 42 -26 45 -31 25z\"/> <path d=\"M2942 1625 c-28 -13 -45 -28 -49 -44 -3 -13 -1 -79 6 -145 15 -164 14 -214 -8 -347 -11 -63 -23 -142 -26 -177 l-7 -63 53 3 54 3 6 85 c4 47 15 117 24 155 13 55 16 90 10 165 -4 52 -10 160 -14 240 l-6 145 -43 -20z\"/> <path d=\"M2800 1578 c0 -18 7 -71 15 -118 21 -116 20 -119 -19 -135 -25 -11 -35 -22 -40 -46 -8 -41 -8 -274 1 -361 l6 -68 43 0 44 0 0 38 c0 22 12 106 26 188 23 129 25 162 18 249 -5 55 -8 142 -9 193 l0 92 -42 0 c-42 0 -43 -1 -43 -32z\"/> <path d=\"M2734 1405 c-11 -28 -47 -38 -159 -45 -66 -4 -119 -12 -133 -21 -21 -13 -49 -75 -39 -85 3 -3 22 3 44 14 36 19 105 32 248 47 72 8 125 29 125 49 0 13 -57 56 -74 56 -4 0 -9 -7 -12 -15z\"/> <path d=\"M3224 1380 c4 -19 9 -146 13 -282 l5 -248 27 6 c14 3 45 15 69 26 49 23 50 28 27 172 -8 52 -14 115 -13 140 1 40 -5 56 -45 115 -26 37 -57 76 -68 87 l-22 19 7 -35z\"/> <path d=\"M2683 1303 c-24 -2 -43 -5 -43 -6 23 -121 26 -180 14 -248 -7 -41 -13 -107 -14 -147 l0 -73 48 7 c26 3 50 9 54 13 4 3 2 88 -4 188 -7 132 -7 191 1 214 14 42 14 59 -1 57 -7 -1 -32 -3 -55 -5z\"/> <path d=\"M2124 1214 c-20 -30 -20 -42 -14 -244 1 -49 -3 -90 -14 -119 -21 -56 -21 -56 9 -69 57 -26 58 -23 51 111 -4 67 -9 150 -12 185 -4 38 -1 74 5 91 7 17 9 36 3 50 l-8 23 -20 -28z\"/> <path d=\"M2600 1069 c-19 -11 -45 -19 -57 -19 -30 0 -38 -44 -18 -99 8 -24 15 -67 15 -96 l0 -53 43 13 42 12 6 109 c3 60 9 119 13 132 9 26 3 26 -44 1z\"/> <path d=\"M2464 1013 c3 -21 9 -52 12 -70 5 -24 1 -39 -15 -59 -13 -17 -21 -41 -21 -67 0 -39 0 -39 33 -33 17 3 38 14 45 23 17 23 15 82 -4 134 -8 24 -13 59 -10 77 4 29 2 32 -21 32 -24 0 -25 -2 -19 -37z\"/> <path d=\"M2412 920 c-12 -10 -48 -26 -79 -35 -32 -9 -68 -29 -84 -45 -26 -26 -29 -35 -29 -97 0 -37 -3 -85 -6 -105 -5 -30 -3 -39 10 -44 30 -12 41 14 47 117 8 118 16 131 94 148 67 15 111 47 94 67 -15 18 -19 17 -47 -6z\"/> <path d=\"M3357 816 c-27 -20 -40 -21 -295 -22 -316 -2 -367 -6 -492 -40 -52 -15 -138 -34 -190 -43 l-95 -17 -3 -43 -3 -43 98 6 c176 13 266 26 403 62 167 44 273 52 391 30 47 -9 99 -16 116 -16 46 0 79 32 93 90 7 28 11 53 9 54 -2 2 -17 -6 -32 -18z\"/> <path d=\"M2030 698 c-11 -23 -20 -43 -20 -44 0 -5 140 -34 163 -34 20 0 25 6 30 37 8 47 3 53 -39 53 -19 0 -51 7 -71 15 -19 8 -37 15 -39 15 -2 0 -13 -19 -24 -42z\"/> </g> </svg> ";
 const FIG_W=593,FIG_H=590;
 const A_TOP={x:318.5,y:21},A_BOT={x:321,y:378},A_HAND={x:226,y:163},A_GRIP={x:430,y:182.5},A_ARROW=228;   // puntas del arco y mano (unidades del SVG)
-// brazo que tensa: hombro fijo, codo y mano calculados con cinemática inversa de dos segmentos
+// brazo que tensa, con anatomía: hombro fijo y cinemática inversa de dos huesos (brazo y antebrazo+mano).
+// Cada hueso lleva un perfil de grosor distinto a cada lado (deltoides, bíceps, tríceps, masa del antebrazo).
 const ARM_CUT=[[85,150],[150,132],[236,132],[236,205],[226,214],[210,222],[195,229],[184,236],[176,242],[150,229],[120,214],[80,198]];
-const ARM_S={x:205,y:222},ARM_L1=82,ARM_L2=105;
-function armIK(T){ // devuelve el codo para alcanzar T desde el hombro, con el codo hacia arriba y atrás
+const ARM_S={x:198,y:226},ARM_L1=100,ARM_L2=128,ARM_FORE=90;
+function armIK(T){
   const dx=T.x-ARM_S.x,dy=T.y-ARM_S.y,d=Math.max(Math.abs(ARM_L1-ARM_L2)+1,Math.min(ARM_L1+ARM_L2-1,Math.hypot(dx,dy)));
   const a=Math.atan2(dy,dx),c=Math.acos((ARM_L1*ARM_L1+d*d-ARM_L2*ARM_L2)/(2*ARM_L1*d));
-  const ang=a-c;   // lado del codo
+  const ang=a-c;
   return {x:ARM_S.x+Math.cos(ang)*ARM_L1,y:ARM_S.y+Math.sin(ang)*ARM_L1};
 }
+// perfiles [t, grosor lado A, grosor lado B] medidos en unidades del SVG, con interpolación suave
+const UPPER=[[0,24,22],[.18,21.5,19.5],[.42,16,17],[.7,13.2,13.6],[1,10.6,10.6]];
+const FORE=[[0,12,11.5],[.18,14,12.5],[.45,10.5,9.5],[.78,7.2,6.8],[1,5.8,5.6]];
+const smooth=t=>t*t*(3-2*t);
+function prof(tab,t){
+  for(let i=0;i<tab.length-1;i++){const a=tab[i],b=tab[i+1];if(t<=b[0]){const f=smooth((t-a[0])/(b[0]-a[0]));return [a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];}}
+  const l=tab[tab.length-1];return [l[1],l[2]];
+}
 let armCanvas=null;
-function drawArm(N_vb,dest){
+const INK='#150b07';
+function drawArm(T,dest){
   const k=S*DPR,w=figCanvas.width,h=figCanvas.height;
   if(!armCanvas||armCanvas.width!==w||armCanvas.height!==h){armCanvas=document.createElement('canvas');armCanvas.width=w;armCanvas.height=h;}
   const c=armCanvas.getContext('2d');c.clearRect(0,0,w,h);c.globalCompositeOperation='source-over';
-  const E=armIK(N_vb),Hn=N_vb;
-  const limb=(a,b,w1,w2)=>{const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l;
-    c.beginPath();c.moveTo((a.x+nx*w1/2)*k,(a.y+ny*w1/2)*k);c.lineTo((b.x+nx*w2/2)*k,(b.y+ny*w2/2)*k);
-    c.lineTo((b.x-nx*w2/2)*k,(b.y-ny*w2/2)*k);c.lineTo((a.x-nx*w1/2)*k,(a.y-ny*w1/2)*k);c.closePath();c.fill();
-    c.beginPath();c.arc(b.x*k,b.y*k,w2/2*k,0,7);c.fill();};
-  c.fillStyle='#c4683a';
-  c.beginPath();c.arc(ARM_S.x*k,ARM_S.y*k,15*k,0,7);c.fill();
-  limb(ARM_S,E,28,21);limb(E,Hn,20,15);
-  // puño cerrado sobre la cuerda
-  const ang=Math.atan2(Hn.y-E.y,Hn.x-E.x);
-  c.save();c.translate(Hn.x*k,Hn.y*k);c.rotate(ang);c.beginPath();c.ellipse(2*k,0,10*k,8.5*k,0,0,7);c.fill();
-  c.strokeStyle='#120a08';c.lineWidth=1.1*k;c.beginPath();c.moveTo(-1*k,-4*k);c.quadraticCurveTo(6*k,-3*k,8*k,1*k);c.stroke();c.restore();
-  // línea del músculo, como en la cerámica
-  c.strokeStyle='#120a08';c.lineWidth=1*k;c.beginPath();
-  const m1={x:ARM_S.x+(E.x-ARM_S.x)*.25,y:ARM_S.y+(E.y-ARM_S.y)*.25},m2={x:ARM_S.x+(E.x-ARM_S.x)*.75,y:ARM_S.y+(E.y-ARM_S.y)*.75};
-  c.moveTo(m1.x*k,m1.y*k+3*k);c.quadraticCurveTo((m1.x+m2.x)/2*k,((m1.y+m2.y)/2+6)*k,m2.x*k,m2.y*k+4*k);c.stroke();
+  const Sh=ARM_S,E=armIK(T);
+  const bone=(A,B)=>{const dx=B.x-A.x,dy=B.y-A.y,l=Math.hypot(dx,dy),ux=dx/l,uy=dy/l;return{A,B,l,ux,uy,nx:-uy,ny:ux};};
+  const up=bone(Sh,E),fo=bone(E,T);
+  const at=(b,t,tab,s)=>{const [pa,pb]=prof(tab,t),hw=s>=0?pa:pb;return{x:b.A.x+b.ux*b.l*t+b.nx*s*hw,y:b.A.y+b.uy*b.l*t+b.ny*s*hw};};
+  const px=q=>[q.x*k,q.y*k];
+  const poly=(pts)=>{c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q.x*k,q.y*k):c.moveTo(q.x*k,q.y*k));c.closePath();c.fill();};
+  const limbShape=(b,tab,N)=>{const L=[],Rr=[];for(let i=0;i<=N;i++){const t=i/N;L.push(at(b,t,tab,1));Rr.push(at(b,t,tab,-1));}poly(L.concat(Rr.reverse()));};
+  const ell=(x,y,rx,ry,rot)=>{c.beginPath();c.ellipse(x*k,y*k,rx*k,ry*k,rot,0,7);c.fill();};
+  const rotOf=b=>Math.atan2(b.uy,b.ux);
+  const TERRA='#c4683a';c.fillStyle=TERRA;
+
+  // ---- masas: deltoides, brazo, codo (con olécranon), antebrazo, mano
+  ell(Sh.x+up.nx*3+up.ux*9,Sh.y+up.ny*3+up.uy*9,25,21,rotOf(up));          // cápsula del deltoides
+  ell(Sh.x-up.ux*2,Sh.y-up.uy*2,19,19,0);                                    // articulación del hombro
+  limbShape(up,UPPER,28);
+  const bx=up.ux-fo.ux,by=up.uy-fo.uy,bl=Math.hypot(bx,by)||1;
+  ell(E.x,E.y,11.2,11.2,0);                                                  // codo
+  ell(E.x+bx/bl*5.5,E.y+by/bl*5.5,8.5,10,Math.atan2(by,bx)+Math.PI/2);       // olécranon
+  limbShape(fo,FORE,28);
+  const W={x:E.x+fo.ux*ARM_FORE,y:E.y+fo.uy*ARM_FORE};
+  const hn={x:fo.nx,y:fo.ny},hu={x:fo.ux,y:fo.uy};
+  // palma y dedos curvados en gancho alrededor de la cuerda (el extremo T es la cuerda)
+  const HL=ARM_L2-ARM_FORE,hp=(a,s2)=>({x:W.x+hu.x*a+hn.x*s2,y:W.y+hu.y*a+hn.y*s2});
+  poly([hp(-4,6),hp(6,8.4),hp(18,9.6),hp(21,-8.8),hp(8,-8),hp(-4,-5.8)]);
+  c.lineCap='round';c.lineJoin='round';c.strokeStyle=TERRA;
+  [[6.4,0],[3.4,1],[.4,2]].forEach(([off,n])=>{    // índice, medio y anular
+    c.lineWidth=(6.2-n*.5)*k;
+    const f=[hp(17,off),hp(HL-5,off-.5*n),hp(HL+.5,off-1.6-n),hp(HL-1.5,off-6-n*1.1),hp(HL-9,off-6.4-n*.9)];
+    c.beginPath();c.moveTo(f[0].x*k,f[0].y*k);
+    c.lineTo(f[1].x*k,f[1].y*k);c.quadraticCurveTo(f[2].x*k,f[2].y*k,f[3].x*k,f[3].y*k);c.lineTo(f[4].x*k,f[4].y*k);c.stroke();});
+  // pulgar recogido bajo la palma
+  c.lineWidth=6.2*k;const th0=hp(5,-6.5),th1=hp(15,-12.5),th2=hp(23,-9.5);
+  c.beginPath();c.moveTo(th0.x*k,th0.y*k);c.quadraticCurveTo(th1.x*k,th1.y*k,th2.x*k,th2.y*k);c.stroke();
+
+  // ---- sombreado: luz cenital desde la izquierda, borde claro arriba y sombra abajo
+  c.globalCompositeOperation='source-atop';
+  const shade=(b,tab,N,t0=0)=>{
+    const upSide=b.ny<0?1:-1;
+    const L=[],Rr=[];for(let q=0;q<=N;q++){const t=t0+(1-t0)*q/N;L.push(at(b,t,tab,1.05));Rr.push(at(b,t,tab,-1.05));}
+    const a=at(b,.4,tab,upSide*1.05),d=at(b,.4,tab,-upSide*1.05);
+    const g=c.createLinearGradient(a.x*k,a.y*k,d.x*k,d.y*k);
+    g.addColorStop(0,'rgba(255,226,175,.20)');g.addColorStop(.3,'rgba(255,205,150,.04)');g.addColorStop(.6,'rgba(70,24,8,.08)');g.addColorStop(1,'rgba(28,8,0,.40)');
+    c.save();c.beginPath();L.concat(Rr.reverse()).forEach((q,n)=>n?c.lineTo(q.x*k,q.y*k):c.moveTo(q.x*k,q.y*k));c.closePath();c.clip();
+    c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();};
+  shade(up,UPPER,16,.3);shade(fo,FORE,16);
+  c.globalCompositeOperation='source-over';
+
+  // ---- líneas de relieve, como en la pintura de vasos: tinta fina que marca los músculos
+  c.strokeStyle=INK;c.lineCap='round';c.lineJoin='round';
+  const curve=(b,tab,pts,wd,al=.9)=>{const P=pts.map(([t,s])=>at(b,t,tab,s));
+    c.globalAlpha=al;c.lineWidth=wd*k;c.beginPath();c.moveTo(P[0].x*k,P[0].y*k);
+    if(P.length===2)c.lineTo(P[1].x*k,P[1].y*k);
+    else{const q={x:2*P[1].x-(P[0].x+P[2].x)/2,y:2*P[1].y-(P[0].y+P[2].y)/2};c.quadraticCurveTo(q.x*k,q.y*k,P[2].x*k,P[2].y*k);}
+    c.stroke();c.globalAlpha=1;};
+  // brazo: borde del deltoides, separación bíceps/tríceps, pliegue del codo
+  curve(up,UPPER,[[.04,.80],[.24,.42],[.42,-.28]],1.25);
+  curve(up,UPPER,[[.36,.05],[.62,.12],[.90,-.02]],1.0,.85);
+  curve(up,UPPER,[[.93,.55],[.98,.05],[.93,-.45]],1.0,.85);
+  // antebrazo: masa de los extensores, flexores y pliegue de la muñeca
+  curve(fo,FORE,[[.05,-.78],[.30,-.60],[.62,-.28]],1.1);
+  curve(fo,FORE,[[.12,.48],[.40,.28],[.74,.06]],1.0,.85);
+  curve(fo,FORE,[[.93,-.95],[.95,0],[.93,.95]],.95,.85);
+  // mano: nudillos y separación de los dedos
+  c.lineWidth=1.0*k;c.globalAlpha=.85;
+  [[[18.6,8.6],[19.6,-8]],[[10,-6.6],[17,-5.2]]].forEach(([a,b])=>{const p0=hp(a[0],a[1]),p1=hp(b[0],b[1]);c.beginPath();c.moveTo(p0.x*k,p0.y*k);c.lineTo(p1.x*k,p1.y*k);c.stroke();});
+  [[HL-6,4.9],[HL-6,1.9]].forEach(([a,s2])=>{const p0=hp(a-12,s2),p1=hp(a,s2-.4);c.beginPath();c.moveTo(p0.x*k,p0.y*k);c.lineTo(p1.x*k,p1.y*k);c.stroke();});
+  c.globalAlpha=1;
+
+  // luz cálida general, igual que la figura
   c.globalCompositeOperation='source-atop';
   const lg=c.createLinearGradient(0,0,w,h);lg.addColorStop(0,'rgba(255,214,160,.28)');lg.addColorStop(.55,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(20,6,0,.45)');
   c.fillStyle=lg;c.fillRect(0,0,w,h);
@@ -336,6 +396,57 @@ function buildFigure(){
   // completar la parte de atrás de la cabeza que tapaba la mano
   c.globalCompositeOperation='source-over';c.fillStyle='#c4683a';
   c.save();c.beginPath();c.rect(220*k,140*k,22*k,80*k);c.clip();c.beginPath();c.ellipse(247*k,181*k,14*k,23*k,0,0,7);c.fill();c.restore();
+  // rellenar la esquina del corte: el trapecio y el dorsal siguen en curva hasta el brazo
+  c.globalCompositeOperation='source-over';c.fillStyle='#c4683a';c.beginPath();
+  [[182,248],[180,242],[179,236],[180,230],[184,225],[192,221],[214,216],[214,252]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));
+  c.closePath();c.fill();
+  // ---- anatomía: sombras suaves y líneas de relieve sobre la figura (solo donde hay figura)
+  c.globalCompositeOperation='source-atop';
+  const soft=(x,y,rx,ry,rot,al,col='30,8,0')=>{c.save();c.translate(x*k,y*k);c.rotate(rot||0);c.scale(rx*k,ry*k);
+    const g=c.createRadialGradient(0,0,0,0,0,1);g.addColorStop(0,`rgba(${col},${al})`);g.addColorStop(1,`rgba(${col},0)`);
+    c.fillStyle=g;c.beginPath();c.arc(0,0,1,0,7);c.fill();c.restore();};
+  // torso: espalda en sombra, flanco del frente, debajo de los pectorales y del esternón
+  soft(196,282,16,48,.25,.42);soft(292,276,9,34,0,.38);soft(225,270,24,9,0,.22);soft(272,272,24,9,0,.2);
+  soft(246,318,30,10,0,.3);soft(250,238,34,10,0,.22);
+  soft(236,252,18,14,0,.16,'255,226,175');soft(268,255,16,12,0,.14,'255,226,175');   // luz en lo alto de los pectorales
+  // brazo del arco: luz arriba, sombra abajo, y sombra de la mano sobre el codo
+  {const g=c.createLinearGradient(0,205*k,0,242*k);g.addColorStop(0,'rgba(255,226,175,.22)');g.addColorStop(.45,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(28,8,0,.5)');
+   c.save();c.beginPath();[[294,214],[350,206],[405,199],[432,195],[432,224],[400,222],[350,238],[294,248]].forEach((q,n)=>n?c.lineTo(q[0]*k,q[1]*k):c.moveTo(q[0]*k,q[1]*k));c.closePath();c.clip();c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();}
+  // piernas: sombra en el lado de la espalda de cada pantorrilla
+  soft(384,505,12,34,-.45,.4);soft(194,520,11,36,.1,.38);soft(372,462,9,20,-.3,.3);
+  c.globalCompositeOperation='source-atop';
+  c.strokeStyle='#150b07';c.lineCap='round';c.lineJoin='round';
+  const ink=(pts,wd,al=.85)=>{c.globalAlpha=al;c.lineWidth=wd*k;c.beginPath();c.moveTo(pts[0][0]*k,pts[0][1]*k);
+    if(pts.length===2)c.lineTo(pts[1][0]*k,pts[1][1]*k);
+    else if(pts.length===3){const qx=2*pts[1][0]-(pts[0][0]+pts[2][0])/2,qy=2*pts[1][1]-(pts[0][1]+pts[2][1])/2;c.quadraticCurveTo(qx*k,qy*k,pts[2][0]*k,pts[2][1]*k);}
+    else{for(let i=1;i<pts.length-1;i++){const mx=(pts[i][0]+pts[i+1][0])/2,my=(pts[i][1]+pts[i+1][1])/2;c.quadraticCurveTo(pts[i][0]*k,pts[i][1]*k,(i===pts.length-2?pts[i+1][0]:mx)*k,(i===pts.length-2?pts[i+1][1]:my)*k);}}
+    c.stroke();c.globalAlpha=1;};
+  // clavículas y hueco yugular
+  ink([[255,231],[272,229],[291,233]],1.1,.8);ink([[254,232],[236,229],[218,235]],1.0,.7);
+  // pectorales: borde inferior, surco del esternón y línea axilar
+  ink([[258,264],[274,272],[291,262]],1.3);ink([[253,264],[236,272],[216,262]],1.3);
+  ink([[255,237],[256,252],[255,268]],1.0,.7);
+  ink([[217,251],[214,260],[218,268]],.9,.6);
+  // abdomen: línea alba, recto abdominal con sus intersecciones tendinosas y los bordes laterales
+  ink([[255,270],[256,296],[254,320]],1.0,.8);
+  ink([[240,284],[255,286],[270,284]],1.0,.75);ink([[239,297],[255,299],[271,297]],1.0,.7);ink([[240,310],[255,312],[270,310]],1.0,.65);
+  ink([[236,274],[233,298],[236,322]],1.05,.75);ink([[275,274],[277,298],[273,322]],1.05,.7);
+  // serratos y oblicuos del flanco, cresta ilíaca sobre el cinturón
+  [[205,262,217,268],[204,273,216,279],[205,284,215,289],[207,295,216,299]].forEach(([x0,y0,x1,y1])=>ink([[x0,y0],[(x0+x1)/2,(y0+y1)/2-1],[x1,y1]],.9,.65));
+  ink([[222,308],[232,316],[238,326]],1.0,.7);ink([[288,300],[281,312],[276,324]],1.0,.65);
+  // brazo del arco: deltoides, bíceps, pliegue del codo y masas del antebrazo
+  ink([[312,222],[321,230],[331,226]],1.1,.75);
+  ink([[301,239],[318,235],[334,230]],1.0,.8);
+  ink([[300,226],[316,222],[332,216]],.9,.55);
+  ink([[336,214],[341,224],[337,234]],1.1,.85);
+  ink([[346,214],[370,212],[396,207]],1.0,.75);
+  ink([[344,222],[368,219],[393,213]],1.0,.8);
+  ink([[346,231],[372,226],[397,217]],1.0,.7);
+  ink([[400,208],[404,214],[402,220]],1.0,.8);
+  // piernas: rótula, músculos de la pantorrilla y tibia
+  ink([[366,476],[372,484],[378,478]],1.0,.7);
+  ink([[377,508],[388,524],[395,541]],1.2,.8);ink([[386,498],[397,520],[402,540]],1.1,.7);ink([[371,512],[381,524],[390,542]],1.0,.65);
+  ink([[188,492],[193,510],[190,528]],1.1,.75);ink([[181,505],[184,520],[182,538]],1.0,.6);
   // luz cálida desde arriba a la izquierda, como barro cocido
   c.globalCompositeOperation='source-atop';
   const lg=c.createLinearGradient(0,0,w,h);lg.addColorStop(0,'rgba(255,214,160,.28)');lg.addColorStop(.55,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(20,6,0,.45)');
@@ -448,6 +559,3 @@ function frame(now){
 }
 requestAnimationFrame(frame);
 </script>
-
-</body>
-</html>
